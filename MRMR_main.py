@@ -9,9 +9,10 @@ sheet = workbook.active
 num_rows = 1000
 num_cols = 7
 
-# 딕셔너리 초기화
+# 딕셔너리
 data_dict = {}
 accuracyList = []
+
 
 # 각 col에 대해 반복(정확도 col 제외한 나머지 col에 대해 가장 최신 정보로 key-value(sec-value) 딕셔너리 완성)
 for col in range(2, num_cols):
@@ -29,7 +30,7 @@ for col in range(2, num_cols):
         # 값 가져오기
         value = sheet.cell(row=row, column=col).value
 
-        # 값이 존재하면 딕셔너리에 저장
+        # 값이 존재하면 딕셔너리에 저장, timeSet에 발생된 시간 추가
         if value is not None:
             column_dict = {}
             column_dict[time] = value
@@ -93,7 +94,7 @@ def update():
             # 값 가져오기
             value = sheet.cell(row=row, column=col).value
 
-            # 값이 존재하면 딕셔너리에 저장
+            # 값이 존재하면 딕셔너리에 저장, timeSet에 발생된 시간 추가
             if value is not None:
                 column_dict = {}
                 column_dict[time] = value
