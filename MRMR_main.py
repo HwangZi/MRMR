@@ -61,13 +61,39 @@ for dict_key, dict_value in data_dict.items():
 
 # 가장 최신 time
 time = key_list[0]
+
 # n순위 차량 정보 리스트 (어떤차인지, cpu)
 firstList = [value_list[0], value_list[1]]
 secondList = [value_list[2], value_list[3]]
 thirdList = [value_list[4], value_list[5]]
+
 # 그래프 x축에 사용될 time_set 리스트로 변환 후 렌더링
 time_set = list(time_set)
 time_set.sort()
+
+
+# 1순위 차량에 대해 x,y 좌표 가져오기
+coordinate_workbook = openpyxl.load_workbook('C:/Users/황지혁/Documents/카카오톡 받은 파일/4intersection (2)/4intersection/4intersection/4intersection/intersection.xlsx')
+
+# value_list[0]이 'taxi%'로 시작하는 경우 >> car_coordinateX/Y sheet에서 x,y 좌표 추출
+if value_list[0].startswith('taxi'):
+    # taxi 몇 번 차량인지 number_taxi에 저장
+    number_taxi = int(value_list[0][4:])
+    taxi_coordinateX = int(coordinate_workbook.worksheets[1].cell(row=time+1, column=number_taxi+1).value)
+    taxi_coordinateY = int(coordinate_workbook.worksheets[2].cell(row=time+1, column=number_taxi+1).value)
+    firstList.append(taxi_coordinateX)
+    firstList.append(taxi_coordinateY)
+
+# value_list[0]이 'bus%'로 시작하는 경우 >> bus_coordinateX/Y sheet에서 x,y 좌표 추출
+elif value_list[0].startswith('bus'):
+    # bus 몇 번 차량인지 number_bus에 저장
+    number_bus = int(value_list[0][3:])
+    bus_coordinateX = int(coordinate_workbook.worksheets[5].cell(row=time+1, column=number_bus+1).value)
+    bus_coordinateY = int(coordinate_workbook.worksheets[6].cell(row=time+1, column=number_bus+1).value)
+    firstList.append(bus_coordinateX)
+    firstList.append(bus_coordinateY)
+
+
 
 # Flask 앱 생성
 app = Flask(__name__)
@@ -133,6 +159,23 @@ def update():
     thirdList = [value_list[4], value_list[5]]
     time_set = list(time_set)
     time_set.sort()
+
+    coordinate_workbook = openpyxl.load_workbook(
+        'C:/Users/황지혁/Documents/카카오톡 받은 파일/4intersection (2)/4intersection/4intersection/4intersection/intersection.xlsx')
+
+    if value_list[0].startswith('taxi'):
+        number_taxi = int(value_list[0][4:])
+        taxi_coordinateX = int(coordinate_workbook.worksheets[1].cell(row=time + 1, column=number_taxi + 1).value)
+        taxi_coordinateY = int(coordinate_workbook.worksheets[2].cell(row=time + 1, column=number_taxi + 1).value)
+        firstList.append(taxi_coordinateX)
+        firstList.append(taxi_coordinateY)
+
+    elif value_list[0].startswith('bus'):
+        number_bus = int(value_list[0][3:])
+        bus_coordinateX = int(coordinate_workbook.worksheets[5].cell(row=time + 1, column=number_bus + 1).value)
+        bus_coordinateY = int(coordinate_workbook.worksheets[6].cell(row=time + 1, column=number_bus + 1).value)
+        firstList.append(bus_coordinateX)
+        firstList.append(bus_coordinateY)
 
     return render_template('index.html', data=data_dict, accuracy=accuracyList, time=time, time_set=time_set, firstList=firstList, secondList=secondList, thirdList=thirdList)
 
